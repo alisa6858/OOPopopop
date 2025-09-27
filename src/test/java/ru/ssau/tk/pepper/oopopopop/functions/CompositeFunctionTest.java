@@ -5,6 +5,48 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CompositeFunctionTest {
+    private final double DELTA = 1e-10;
+
+    @Test
+    void andThen1() {
+        MathFunction f1 = new SqrFunction();
+        MathFunction f2 = new LogFunction();
+        CompositeFunction cf = f1.andThen(f2);
+        assertEquals(f1, cf.getFirstFunction());
+        assertEquals(f2, cf.getSecondFunction());
+
+        double x = 4;
+        double y = Math.log(Math.sqrt(x));
+        assertEquals(y, cf.apply(x), DELTA);
+    }
+
+    @Test
+    void andThen2() {
+        MathFunction f1 = new SqrFunction();
+        MathFunction f2 = new ReciprocalFunction();
+        MathFunction f3 = new ConstantFunction(4);
+        CompositeFunction cf = f3.andThen(f2).andThen(f1);
+
+        assertEquals(f1, cf.getSecondFunction());
+
+        double x = Double.NaN;
+        double y = 0.5;
+        assertEquals(y, cf.apply(x), DELTA);
+    }
+
+    @Test
+    void andThen3() {
+        MathFunction f1 = new SqrFunction();
+        MathFunction f2 = new ReciprocalFunction();
+        MathFunction f3 = new LogFunction();
+        CompositeFunction cf = f1.andThen(f2).andThen(f3);
+
+        assertEquals(f3, cf.getSecondFunction());
+
+        double x = 4;
+        double y = Math.log(1.0 / Math.sqrt(x));;
+        assertEquals(y, cf.apply(x), DELTA);
+    }
 
     @Test
     void apply0() {
@@ -14,8 +56,7 @@ class CompositeFunctionTest {
 
         double x = 0.25;
         double y = 2;
-        double delta = 1e-10;
-        assertEquals(y, f.apply(x), delta);
+        assertEquals(y, f.apply(x), DELTA);
     }
 
     @Test
@@ -26,8 +67,7 @@ class CompositeFunctionTest {
 
         double x = 0.25;
         double y = 2;
-        double delta = 1e-10;
-        assertEquals(y, f.apply(x), delta);
+        assertEquals(y, f.apply(x), DELTA);
     }
 
     @Test
@@ -37,8 +77,7 @@ class CompositeFunctionTest {
         MathFunction f = new CompositeFunction(f1, f2);
 
         double x = 2;
-        double delta = 1e-10;
-        assertEquals(x, f.apply(x), delta);
+        assertEquals(x, f.apply(x), DELTA);
     }
 
     @Test
@@ -51,8 +90,7 @@ class CompositeFunctionTest {
 
         double x = 2;
         double y = 0.5;
-        double delta = 1e-10;
-        assertEquals(y, cf2.apply(x), delta);
+        assertEquals(y, cf2.apply(x), DELTA);
     }
 
     @Test
@@ -66,8 +104,7 @@ class CompositeFunctionTest {
 
         double x = 2;
         double y = 0.5;
-        double delta = 1e-10;
-        assertEquals(y, cf3.apply(x), delta);
+        assertEquals(y, cf3.apply(x), DELTA);
     }
 
     @Test
