@@ -4,7 +4,7 @@ public class NytonFunction implements MathFunction {
     private MathFunction function;
     private MathFunction derivative;    // Производная
     private double tolerance;           // Допустимая погрешность
-    private int maxIterations;          // Максимальное число итераций
+    private int maxIterations;          // Макс число итераций
 
     public NytonFunction(MathFunction function, MathFunction derivative,
                           double tolerance, int maxIterations) {
@@ -20,8 +20,8 @@ public class NytonFunction implements MathFunction {
     }
 
     @Override
-    public double apply(double startPosition) {
-        double current = startPosition;
+    public double apply(double initialApprox) {
+        double current = initialApprox;
 
         for (int i = 0; i < maxIterations; i++) {
             double fx = function.apply(current);
@@ -29,16 +29,15 @@ public class NytonFunction implements MathFunction {
 
             // Проверка на нулевую производную с более точным условием
             if (Math.abs(fpx) < 1e-10) {
-                // Если производная почти нулевая, пробуем немного сместить точку
                 if (Math.abs(fx) < tolerance) {
-                    return current; // Мы уже в корне
+                    return current;
                 }
             }
 
             double next = current - fx / fpx;
 
             if (Math.abs(next - current) < tolerance) {
-                return next; // Возвращаем найденный корень
+                return next;
             }
             current = next;
         }
