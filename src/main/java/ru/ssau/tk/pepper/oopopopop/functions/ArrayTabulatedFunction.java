@@ -55,7 +55,6 @@ public class ArrayTabulatedFunction extends AbstractTabulatedFunction implements
         return count;
     }
 
-
     @Override
     protected double extrapolateLeft(double x) {
         if (getCount() == 1) {
@@ -136,7 +135,11 @@ public class ArrayTabulatedFunction extends AbstractTabulatedFunction implements
         if (idx != -1) {
             yValues[idx] = y;
         } else {
-            idx = floorIndexOfX(x);
+            idx = 1 + floorIndexOfX(x);
+            if (idx > count) {
+                idx = 0;
+            }
+
             double[] newXValues = new double[count + 1];
             double[] newYValues = new double[count + 1];
 
