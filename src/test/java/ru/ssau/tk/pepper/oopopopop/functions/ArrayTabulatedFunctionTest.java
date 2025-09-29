@@ -147,4 +147,39 @@ class ArrayTabulatedFunctionTest {
 
         assertEquals(X1[X1.length - 1], f.rightBound(), DELTA);
     }
+
+    @Test
+    void insert() {
+        ArrayTabulatedFunction f = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], 2);
+
+        // Вставка в середину
+        double x = (X1[0] + X1[X1.length - 1]) / 2;
+        double y = F1.apply(x);
+        f.insert(x, y);
+        assertEquals(3, f.getCount());
+        assertEquals(1, f.indexOfX(x));
+        assertEquals(1, f.indexOfY(y));
+        assertEquals(x, f.getX(1), DELTA);
+        assertEquals(y, f.getY(1), DELTA);
+
+        // Вставка в начало
+        x = f.leftBound() - 1;
+        y = F1.apply(x);
+        f.insert(x, y);
+        assertEquals(4, f.getCount());
+        assertEquals(0, f.indexOfX(x));
+        assertEquals(0, f.indexOfY(y));
+        assertEquals(x, f.getX(0), DELTA);
+        assertEquals(y, f.getY(0), DELTA);
+
+        // Вставка в конец
+        x = f.rightBound() + 1;
+        y = F1.apply(x);
+        f.insert(x, y);
+        assertEquals(5, f.getCount());
+        assertEquals(f.getCount() - 1, f.indexOfX(x));
+        assertEquals(f.getCount() - 1, f.indexOfY(y));
+        assertEquals(x, f.getX(f.getCount() - 1), DELTA);
+        assertEquals(y, f.getY(f.getCount() - 1), DELTA);
+    }
 }

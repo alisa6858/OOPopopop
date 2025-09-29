@@ -2,9 +2,9 @@ package ru.ssau.tk.pepper.oopopopop.functions;
 
 import java.util.Arrays;
 
-public class ArrayTabulatedFunction extends AbstractTabulatedFunction {
-    private final double[] xValues;
-    private final double[] yValues;
+public class ArrayTabulatedFunction extends AbstractTabulatedFunction implements Insertable {
+    private double[] xValues;
+    private double[] yValues;
 
     public ArrayTabulatedFunction(double[] xValues, double[] yValues) {
         if (xValues.length != yValues.length) {
@@ -123,5 +123,29 @@ public class ArrayTabulatedFunction extends AbstractTabulatedFunction {
     @Override
     public double rightBound() {
         return xValues[count - 1];
+    }
+
+    @Override
+    public void insert(double x, double y) {
+        int idx = indexOfX(x);
+        if (idx != -1) {
+            yValues[idx] = y;
+        } else {
+            idx = floorIndexOfX(x);
+            double[] newXValues = new double[count + 1];
+            double[] newYValues = new double[count + 1];
+
+            System.arraycopy(xValues, 0, newXValues, 0, idx);
+            System.arraycopy(yValues, 0, newYValues, 0, idx);
+            System.arraycopy(xValues, idx, newXValues, idx + 1, count - idx);
+            System.arraycopy(yValues, idx, newYValues, idx + 1, count - idx);
+
+            newXValues[idx] = x;
+            newYValues[idx] = y;
+            xValues = newXValues;
+            yValues = newYValues;
+
+            ++count;
+        }
     }
 }
