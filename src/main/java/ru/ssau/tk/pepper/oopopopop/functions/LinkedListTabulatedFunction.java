@@ -1,7 +1,7 @@
 package ru.ssau.tk.pepper.oopopopop.functions;
 
-public class LinkedListTabulatedFunction extends AbstractTabulatedFunction implements Insertable {
-    private Node head = null;
+public class LinkedListTabulatedFunction extends AbstractTabulatedFunction implements Insertable, Removable {
+    Node head = null;
 
     public LinkedListTabulatedFunction(double[] xValues, double[] yValues) {
         if (xValues.length != yValues.length) {
@@ -100,7 +100,7 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
 
     @Override
     public double getX(int index) {
-        if (index < 0 || index > getCount()) {
+        if (index < 0 || index >= getCount()) {
             throw new IndexOutOfBoundsException();
         }
         return getNode(index).x;
@@ -108,7 +108,7 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
 
     @Override
     public double getY(int index) {
-        if (index < 0 || index > getCount()) {
+        if (index < 0 || index >= getCount()) {
             throw new IndexOutOfBoundsException();
         }
         return getNode(index).y;
@@ -116,7 +116,7 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
 
     @Override
     public void setY(int index, double value) {
-        if (index < 0 || index > getCount()) {
+        if (index < 0 || index >= getCount()) {
             throw new IndexOutOfBoundsException();
         }
         getNode(index).y = value;
@@ -178,6 +178,22 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
             }
         }
     }
+
+    @Override
+    public void remove(int index) {
+        if (index < 0 || index >= getCount()) {
+            throw new IndexOutOfBoundsException();
+        }
+        Node node = getNode(index);
+        if (node == head) {
+            head = head.next;
+        }
+        node.unlink();
+        --count;
+        if (count == 0) {
+            head = null;
+        }
+    }
 }
 
 class Node {
@@ -204,5 +220,10 @@ class Node {
         successor.prev = this;
         next.prev = successor;
         next = successor;
+    }
+
+    void unlink() {
+        next.prev = prev;
+        prev.next = next;
     }
 }
