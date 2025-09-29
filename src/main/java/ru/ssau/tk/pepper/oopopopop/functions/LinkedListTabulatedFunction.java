@@ -1,6 +1,6 @@
 package ru.ssau.tk.pepper.oopopopop.functions;
 
-public class LinkedListTabulatedFunction extends AbstractTabulatedFunction {
+public class LinkedListTabulatedFunction extends AbstractTabulatedFunction implements Insertable {
     private Node head = null;
 
     public LinkedListTabulatedFunction(double[] xValues, double[] yValues) {
@@ -154,6 +154,29 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction {
     @Override
     public double rightBound() {
         return head.prev.x;
+    }
+
+    @Override
+    public void insert(double x, double y) {
+        int idx = indexOfX(x);
+        if (idx != -1) {
+            Node node = getNode(idx);
+            node.y = y;
+        } else {
+            if (count == 0 || x > rightBound() || x < leftBound()) {
+                boolean needRebase = count != 0 && x < leftBound();
+                addNode(x, y);
+                if (needRebase) {
+                    head = head.prev;
+                }
+            } else {
+                idx = floorIndexOfX(x);
+                Node newNode = new Node(x, y);
+                Node node = getNode(idx);
+                node.link(newNode);
+                count += 1;
+            }
+        }
     }
 }
 
