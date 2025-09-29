@@ -61,12 +61,12 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
 
     @Override
     protected int floorIndexOfX(double x) {
-        Node node = head;
-        for (int i = 0; i < count; ++i) {
-            if (node.x < x) {
+        Node node = head.prev;
+        for (int i = count - 1; i >= 0; --i) {
+            if (x >= node.x) {
                 return i;
             }
-            node = node.next;
+            node = node.prev;
         }
         return count;
     }
