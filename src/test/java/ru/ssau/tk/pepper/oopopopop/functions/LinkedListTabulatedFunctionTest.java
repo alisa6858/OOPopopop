@@ -148,4 +148,71 @@ class LinkedListTabulatedFunctionTest {
         assertEquals(X1[X1.length - 1], f.rightBound(), DELTA);
     }
 
+    @Test
+    void insert() {
+        LinkedListTabulatedFunction f = new LinkedListTabulatedFunction(F1, X1[0], X1[X1.length - 1], 2);
+
+        // Вставка в середину
+        double x = (X1[0] + X1[X1.length - 1]) / 2;
+        double y = F1.apply(x);
+        f.insert(x, y);
+        assertEquals(3, f.getCount());
+        assertEquals(1, f.indexOfX(x));
+        assertEquals(1, f.indexOfY(y));
+        assertEquals(x, f.getX(1), DELTA);
+        assertEquals(y, f.getY(1), DELTA);
+
+        // Вставка в начало
+        x = f.leftBound() - 1;
+        y = F1.apply(x);
+        f.insert(x, y);
+        assertEquals(4, f.getCount());
+        assertEquals(0, f.indexOfX(x));
+        assertEquals(0, f.indexOfY(y));
+        assertEquals(x, f.getX(0), DELTA);
+        assertEquals(y, f.getY(0), DELTA);
+
+        // Вставка в конец
+        x = f.rightBound() + 1;
+        y = F1.apply(x);
+        f.insert(x, y);
+        assertEquals(5, f.getCount());
+        assertEquals(f.getCount() - 1, f.indexOfX(x));
+        assertEquals(f.getCount() - 1, f.indexOfY(y));
+        assertEquals(x, f.getX(f.getCount() - 1), DELTA);
+        assertEquals(y, f.getY(f.getCount() - 1), DELTA);
+    }
+
+    @Test
+    void remove() {
+        LinkedListTabulatedFunction f = new LinkedListTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
+
+        // Удаление из середины
+        int idx = X1.length / 2;
+        f.remove(idx);
+        assertEquals(X1.length - 1, f.getCount());
+        assertEquals(X1[idx + 1], f.getX(idx), DELTA);
+        assertEquals(Y1[idx + 1], f.getY(idx), DELTA);
+
+        // Удаление из начала
+        idx = 0;
+        f.remove(idx);
+        assertEquals(X1.length - 2, f.getCount());
+        assertEquals(X1[idx + 1], f.getX(idx), DELTA);
+        assertEquals(Y1[idx + 1], f.getY(idx), DELTA);
+
+        // Удаление из конца
+        idx = f.getCount() - 1;
+        f.remove(idx);
+        assertEquals(X1.length - 3, f.getCount());
+        assertEquals(X1[X1.length - 2], f.getX(idx - 1), DELTA);
+        assertEquals(Y1[Y1.length - 2], f.getY(idx - 1), DELTA);
+
+        // Проверка, что все остальные элементы удаляются корректно,
+        // и голова списка после этого пустая.
+        while (f.getCount() > 0) {
+            assertDoesNotThrow(() -> f.remove(0));
+        }
+        assertNull(f.head);
+    }
 }
