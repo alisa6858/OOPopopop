@@ -47,9 +47,14 @@ public class ArrayTabulatedFunction extends AbstractTabulatedFunction implements
 
     @Override
     protected int floorIndexOfX(double x) {
-        int index = Arrays.binarySearch(xValues, x);
-        return index < 0 ? -(index + 1) : index;
+        for (int i = count - 1; i >= 0; --i) {
+            if (x >= xValues[i]) {
+                return i;
+            }
+        }
+        return count;
     }
+
 
     @Override
     protected double extrapolateLeft(double x) {
