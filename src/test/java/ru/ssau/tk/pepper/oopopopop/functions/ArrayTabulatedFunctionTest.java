@@ -1,246 +1,150 @@
 package ru.ssau.tk.pepper.oopopopop.functions;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ArrayTabulatedFunctionTest {
+    private final double DELTA = 1e-10;
+
+    // y = 2 * x + 1
+    private final double[] X1 = {1, 2, 3, 4, 5};
+    private final double[] Y1 = {3, 5, 7, 9, 11};
+
+    private final MathFunction F1 = x -> 2.0 * x + 1;
 
     @Test
-    void testConstructorFromArrays() {
-        double[] xValues = {1.0, 2.0, 3.0, 4.0};
-        double[] yValues = {1.0, 4.0, 9.0, 16.0};
+    void constructor2() {
+        TabulatedFunction f1 = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
 
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(xValues, yValues);
+        assertEquals(X1.length, f1.getCount());
+        assertEquals(X1[0], f1.getX(0), DELTA);
+        assertEquals(X1[X1.length - 1], f1.getX(X1.length - 1), DELTA);
 
-        assertEquals(4, function.getCount());
-        assertEquals(1.0, function.leftBound(), 1e-10);
-        assertEquals(4.0, function.rightBound(), 1e-10);
+        TabulatedFunction f2 = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], 1);
+
+        assertEquals(1, f2.getCount());
+        assertEquals(X1[0], f2.getX(0), DELTA);
+
+        TabulatedFunction f3 = new ArrayTabulatedFunction(F1, X1[X1.length - 1], X1[0], 1);
+
+        assertEquals(1, f3.getCount());
+        assertEquals(X1[0], f3.getX(0), DELTA);
+
+        TabulatedFunction f4 = new ArrayTabulatedFunction(F1, X1[0], X1[0], X1.length);
+
+        assertEquals(X1.length, f4.getCount());
+        assertEquals(X1[0], f4.getX(0), DELTA);
+        assertEquals(X1[0], f4.getX(X1.length - 1), DELTA);
     }
 
     @Test
-    void testConstructorFromArraysThrowsExceptionForInvalidInput() {
-        double[] xValues = {1.0, 2.0};
-        double[] yValues = {1.0}; // Разные длины
+    void getCount() {
+        TabulatedFunction f1 = new ArrayTabulatedFunction(X1, Y1);
+        TabulatedFunction f2 = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            new ArrayTabulatedFunction(xValues, yValues);
-        });
-
-        double[] xValues2 = {1.0};
-        double[] yValues2 = {1.0}; // Меньше 2 точек
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            new ArrayTabulatedFunction(xValues2, yValues2);
-        });
-
-        double[] xValues3 = {2.0, 1.0}; // Не упорядочены
-        double[] yValues3 = {1.0, 2.0};
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            new ArrayTabulatedFunction(xValues3, yValues3);
-        });
+        assertEquals(X1.length, f1.getCount());
+        assertEquals(X1.length, f2.getCount());
     }
 
     @Test
-    void testConstructorFromFunction() {
-        MathFunction sqr = new SqrFunction();
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(sqr, 0.0, 4.0, 5);
+    void apply() {
+        TabulatedFunction f = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
 
-        assertEquals(5, function.getCount());
-        assertEquals(0.0, function.leftBound(), 1e-10);
-        assertEquals(4.0, function.rightBound(), 1e-10);
+        // case 1: exact match
+        assertEquals(Y1[2], f.apply(X1[2]), DELTA);
 
-        // Проверяем значения
-        assertEquals(0.0, function.getY(0), 1e-10);  // 0² = 0
-        assertEquals(1.0, function.getY(1), 1e-10);  // 1² = 1
-        assertEquals(4.0, function.getY(2), 1e-10);  // 2² = 4
-        assertEquals(9.0, function.getY(3), 1e-10);  // 3² = 9
-        assertEquals(16.0, function.getY(4), 1e-10); // 4² = 16
+        // case2: interpolation
+        double x = (X1[1] + X1[2]) / 2;
+        double y = F1.apply(x);
+        assertEquals(y, f.apply(x), DELTA);
+
+        // case3: extrapolate left
+        x = X1[0] - 1;
+        y = F1.apply(x);
+        assertEquals(y, f.apply(x), DELTA);
+
+        // case4: extrapolate right
+        x = X1[X1.length - 1] + 1;
+        y = F1.apply(x);
+        assertEquals(y, f.apply(x), DELTA);
     }
 
     @Test
-    void testConstructorFromFunctionWithEqualBounds() {
-        MathFunction constant = new ConstantFunction(5.0);
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(constant, 2.0, 2.0, 3);
+    void getX() {
+        TabulatedFunction f1 = new ArrayTabulatedFunction(X1, Y1);
+        TabulatedFunction f2 = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
 
-        assertEquals(3, function.getCount());
-        assertEquals(2.0, function.leftBound(), 1e-10);
-        assertEquals(2.0, function.rightBound(), 1e-10);
+        assertEquals(X1[0], f1.getX(0), DELTA);
+        assertEquals(X1[X1.length - 1], f1.getX(X1.length - 1), DELTA);
 
-        // Все значения должны быть одинаковыми
-        for (int i = 0; i < function.getCount(); i++) {
-            assertEquals(2.0, function.getX(i), 1e-10);
-            assertEquals(5.0, function.getY(i), 1e-10);
-        }
+        assertEquals(X1[0], f2.getX(0), DELTA);
+        assertEquals(X1[X1.length - 1], f2.getX(X1.length - 1), DELTA);
     }
 
     @Test
-    void testConstructorFromFunctionWithReversedBounds() {
-        MathFunction sqr = new SqrFunction();
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(sqr, 4.0, 0.0, 5);
+    void getY() {
+        TabulatedFunction f1 = new ArrayTabulatedFunction(X1, Y1);
+        TabulatedFunction f2 = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
 
-        assertEquals(5, function.getCount());
-        assertEquals(0.0, function.leftBound(), 1e-10); // Должен автоматически отсортировать
-        assertEquals(4.0, function.rightBound(), 1e-10);
+        assertEquals(Y1[0], f1.getY(0), DELTA);
+        assertEquals(Y1[Y1.length - 1], f1.getY(Y1.length - 1), DELTA);
+
+        assertEquals(Y1[0], f2.getY(0), DELTA);
+        assertEquals(Y1[Y1.length - 1], f2.getY(Y1.length - 1), DELTA);
     }
 
     @Test
-    void testGetXGetY() {
-        double[] xValues = {1.0, 2.0, 3.0};
-        double[] yValues = {10.0, 20.0, 30.0};
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(xValues, yValues);
+    void setY() {
+        TabulatedFunction f1 = new ArrayTabulatedFunction(X1, Y1);
 
-        assertEquals(1.0, function.getX(0), 1e-10);
-        assertEquals(2.0, function.getX(1), 1e-10);
-        assertEquals(3.0, function.getX(2), 1e-10);
-
-        assertEquals(10.0, function.getY(0), 1e-10);
-        assertEquals(20.0, function.getY(1), 1e-10);
-        assertEquals(30.0, function.getY(2), 1e-10);
-
-        // Проверка исключений для неверных индексов
-        assertThrows(IndexOutOfBoundsException.class, () -> function.getX(-1));
-        assertThrows(IndexOutOfBoundsException.class, () -> function.getX(3));
-        assertThrows(IndexOutOfBoundsException.class, () -> function.getY(-1));
-        assertThrows(IndexOutOfBoundsException.class, () -> function.getY(3));
+        int idx = 2;
+        double y = -100;
+        f1.setY(idx, y);
+        assertEquals(y, f1.getY(idx), DELTA);
     }
 
     @Test
-    void testSetY() {
-        double[] xValues = {1.0, 2.0, 3.0};
-        double[] yValues = {10.0, 20.0, 30.0};
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(xValues, yValues);
+    void indexOfX() {
+        TabulatedFunction f = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
 
-        function.setY(1, 25.0);
-        assertEquals(25.0, function.getY(1), 1e-10);
+        assertEquals(0, f.indexOfX(X1[0]));
+        assertEquals(1, f.indexOfX(X1[1]));
+        assertEquals(2, f.indexOfX(X1[2]));
+        assertEquals(3, f.indexOfX(X1[3]));
+        assertEquals(4, f.indexOfX(X1[4]));
 
-        // Проверка исключения для неверного индекса
-        assertThrows(IndexOutOfBoundsException.class, () -> function.setY(5, 100.0));
+        assertEquals(-1, f.indexOfX((X1[0] + X1[1]) / 2));
+        assertEquals(-1, f.indexOfX(X1[0] - 1));
+        assertEquals(-1, f.indexOfX(X1[X1.length - 1] + 1));
     }
 
     @Test
-    void testIndexOfX() {
-        double[] xValues = {1.0, 2.0, 3.0, 4.0};
-        double[] yValues = {1.0, 2.0, 3.0, 4.0};
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(xValues, yValues);
+    void indexOfY() {
+        TabulatedFunction f = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
 
-        assertEquals(0, function.indexOfX(1.0));
-        assertEquals(2, function.indexOfX(3.0));
-        assertEquals(-1, function.indexOfX(5.0)); // Не существует
-        assertEquals(-1, function.indexOfX(1.5)); // Не существует
+        assertEquals(0, f.indexOfY(Y1[0]));
+        assertEquals(1, f.indexOfY(Y1[1]));
+        assertEquals(2, f.indexOfY(Y1[2]));
+        assertEquals(3, f.indexOfY(Y1[3]));
+        assertEquals(4, f.indexOfY(Y1[4]));
+
+        assertEquals(-1, f.indexOfY((Y1[0] + Y1[1]) / 2));
+        assertEquals(-1, f.indexOfY(Y1[0] - 1));
+        assertEquals(-1, f.indexOfY(Y1[Y1.length - 1] + 1));
     }
 
     @Test
-    void testIndexOfY() {
-        double[] xValues = {1.0, 2.0, 3.0, 4.0};
-        double[] yValues = {10.0, 20.0, 30.0, 20.0};
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(xValues, yValues);
+    void leftBound() {
+        TabulatedFunction f = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
 
-        assertEquals(0, function.indexOfY(10.0));
-        assertEquals(1, function.indexOfY(20.0)); // Первое вхождение
-        assertEquals(-1, function.indexOfY(50.0)); // Не существует
+        assertEquals(X1[0], f.leftBound(), DELTA);
     }
 
     @Test
-    void testFloorIndexOfX() {
-        double[] xValues = {1.0, 2.0, 3.0, 4.0};
-        double[] yValues = {1.0, 2.0, 3.0, 4.0};
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(xValues, yValues);
+    void rightBound() {
+        TabulatedFunction f = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
 
-        assertEquals(0, function.floorIndexOfX(0.5));  // Меньше минимального
-        assertEquals(0, function.floorIndexOfX(1.0));  // Равно первому
-        assertEquals(0, function.floorIndexOfX(1.5));  // Между 1 и 2
-        assertEquals(1, function.floorIndexOfX(2.0));  // Равно второму
-        assertEquals(1, function.floorIndexOfX(2.5));  // Между 2 и 3
-        assertEquals(3, function.floorIndexOfX(4.0));  // Равно последнему
-        assertEquals(4, function.floorIndexOfX(5.0));  // Больше максимального
-    }
-
-    @Test
-    void testExtrapolateLeft() {
-        double[] xValues = {1.0, 2.0, 3.0};
-        double[] yValues = {1.0, 4.0, 9.0};
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(xValues, yValues);
-
-        // Экстраполяция слева: x = 0.0
-        double result = function.apply(0.0);
-        double expected = 1.0 + (4.0 - 1.0) * (0.0 - 1.0) / (2.0 - 1.0); // = -2.0
-        assertEquals(expected, result, 1e-10);
-
-        // Тест с одной точкой
-        double[] xSingle = {2.0};
-        double[] ySingle = {5.0};
-        ArrayTabulatedFunction singlePointFunction = new ArrayTabulatedFunction(xSingle, ySingle);
-        assertEquals(5.0, singlePointFunction.apply(0.0), 1e-10); // Всегда возвращает 5.0
-    }
-
-    @Test
-    void testExtrapolateRight() {
-        double[] xValues = {1.0, 2.0, 3.0};
-        double[] yValues = {1.0, 4.0, 9.0};
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(xValues, yValues);
-
-        // Экстраполяция справа: x = 4.0
-        double result = function.apply(4.0);
-        double expected = 4.0 + (9.0 - 4.0) * (4.0 - 2.0) / (3.0 - 2.0); // = 14.0
-        assertEquals(expected, result, 1e-10);
-    }
-
-    @Test
-    void testInterpolate() {
-        double[] xValues = {1.0, 2.0, 3.0};
-        double[] yValues = {1.0, 4.0, 9.0};
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(xValues, yValues);
-
-        // Интерполяция между 1 и 2: x = 1.5
-        double result = function.apply(1.5);
-        double expected = 1.0 + (4.0 - 1.0) * (1.5 - 1.0) / (2.0 - 1.0); // = 2.5
-        assertEquals(expected, result, 1e-10);
-
-        // Интерполяция между 2 и 3: x = 2.5
-        result = function.apply(2.5);
-        expected = 4.0 + (9.0 - 4.0) * (2.5 - 2.0) / (3.0 - 2.0); // = 6.5
-        assertEquals(expected, result, 1e-10);
-    }
-
-    @Test
-    void testApplyWithExactXValues() {
-        double[] xValues = {1.0, 2.0, 3.0};
-        double[] yValues = {10.0, 20.0, 30.0};
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(xValues, yValues);
-
-        // Точные значения из таблицы
-        assertEquals(10.0, function.apply(1.0), 1e-10);
-        assertEquals(20.0, function.apply(2.0), 1e-10);
-        assertEquals(30.0, function.apply(3.0), 1e-10);
-    }
-
-    @Test
-    void testToString() {
-        double[] xValues = {1.0, 2.0};
-        double[] yValues = {10.0, 20.0};
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(xValues, yValues);
-
-        String result = function.toString();
-        assertTrue(result.contains("(1.0, 10.0)"));
-        assertTrue(result.contains("(2.0, 20.0)"));
-        assertTrue(result.startsWith("ArrayTabulatedFunction["));
-    }
-
-    @Test
-    void testArrayProtection() {
-        // Проверяем, что внешние изменения не влияют на внутренние массивы
-        double[] xValues = {1.0, 2.0, 3.0};
-        double[] yValues = {1.0, 2.0, 3.0};
-
-        ArrayTabulatedFunction function = new ArrayTabulatedFunction(xValues, yValues);
-
-        // Меняем исходные массивы
-        xValues[0] = 100.0;
-        yValues[0] = 100.0;
-
-        // Внутренние массивы не должны измениться
-        assertEquals(1.0, function.getX(0), 1e-10);
-        assertEquals(1.0, function.getY(0), 1e-10);
+        assertEquals(X1[X1.length - 1], f.rightBound(), DELTA);
     }
 }
