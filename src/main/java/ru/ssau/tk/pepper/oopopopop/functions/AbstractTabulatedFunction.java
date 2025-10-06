@@ -1,5 +1,8 @@
 package ru.ssau.tk.pepper.oopopopop.functions;
 
+import ru.ssau.tk.pepper.oopopopop.exceptions.DifferentLengthOfArraysException;
+import ru.ssau.tk.pepper.oopopopop.exceptions.ArrayIsNotSortedException;
+
 public abstract class AbstractTabulatedFunction implements TabulatedFunction {
     protected int count = 0;
 
@@ -26,6 +29,13 @@ public abstract class AbstractTabulatedFunction implements TabulatedFunction {
 
     @Override
     public double apply(double x) {
+        // Хотя конструкторы не позволяют создать объекты с count == 0, но с помощью
+        // remove() это можно будет сделать, и в этом случае объект нельзя будет использовать
+        // по назначению.
+        if (count == 0) {
+            throw new IllegalStateException("Table is empty.");
+        }
+
         if (x < leftBound()) {
             return extrapolateLeft(x);
         }
@@ -46,5 +56,19 @@ public abstract class AbstractTabulatedFunction implements TabulatedFunction {
     @Override
     public int getCount() {
         return count;
+    }
+
+    static void checkLengthIsTheSame(double[] xValues, double[] yValues) {
+        if (xValues.length != yValues.length) {
+            throw new DifferentLengthOfArraysException();
+        }
+    }
+
+    static void checkSorted(double[] xValues) {
+        for (int i = 1; i < xValues.length; ++i) {
+            if (xValues[i - 1] > xValues[i]) {
+                throw new ArrayIsNotSortedException();
+            }
+        }
     }
 }
