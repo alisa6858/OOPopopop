@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public abstract class AbstractTabulatedFunction implements TabulatedFunction, Serializable {
     // Так как здесь хранится count, то для успешной сериализации/десериализации
-    // бвзовый класс также должен быть Serializable
+    // базовый класс также должен быть Serializable
     @Serial
     private static final long serialVersionUID = -6113226241446244071L;
 
@@ -29,11 +29,11 @@ public abstract class AbstractTabulatedFunction implements TabulatedFunction, Se
     @Override
     public double apply(double x) {
         // Хотя конструкторы не позволяют создать
-        // объекты с count == 0, но с помощью
+        // объекты с count < 2, но с помощью
         // remove() это можно будет сделать,
         // и в этом случае объект нельзя будет использовать
         // по назначению.
-        if (count == 0) {
+        if (count < 2) {
             throw new IllegalStateException("Table is empty.");
         }
 
@@ -45,13 +45,17 @@ public abstract class AbstractTabulatedFunction implements TabulatedFunction, Se
             return extrapolateRight(x);
         }
 
-        int index = indexOfX(x);
-        if (index == -1) {
-            index = floorIndexOfX(x);
-            return interpolate(x, index);
+        // Улучшение для избежания лишних проходов по
+        // массиву (сначала indexOfX(), а затем floorIndexOfX()).
+        // Используем только floorIndexOfX() и проверяем индекс,
+        // который возвращается.
+        int index = floorIndexOfX(x);
+        if (getX(index) == x) {
+            // При точном совпадении просто возвращаем значение y
+            return getY(index);
         }
-
-        return getY(index);
+        // Иначе делаем интерполяцию между точками в index и index + 1
+        return interpolate(x, index);
     }
 
     @Override

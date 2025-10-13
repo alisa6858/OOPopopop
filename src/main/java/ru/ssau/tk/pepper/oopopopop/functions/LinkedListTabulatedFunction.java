@@ -1,5 +1,6 @@
 package ru.ssau.tk.pepper.oopopopop.functions;
 
+import org.jetbrains.annotations.NotNull;
 import ru.ssau.tk.pepper.oopopopop.exceptions.InterpolationException;
 
 import java.io.Serial;
@@ -54,10 +55,22 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
     }
 
     private Node getNode(int index) {
-        // TODO: loop backward if index > count/2
-        Node node = head;
-        for (int i = 0; i < index; ++i) {
-            node = node.next;
+        if (head == null) {
+            throw new IllegalStateException();
+        }
+        // Реализован проход с хвоста,
+        // если index > count/2
+        Node node;
+        if (index < count / 2) {
+            node = head;
+            for (int i = 0; i < index; ++i) {
+                node = node.next;
+            }
+        } else {
+            node = head.prev;
+            for (int i = 0; i < count - index - 1; ++i) {
+                node = node.prev;
+            }
         }
         return node;
     }
@@ -230,7 +243,7 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
     }
 
     @Override
-    public Iterator<Point> iterator() {
+    public @NotNull Iterator<Point> iterator() {
         return new Iterator<>() {
             Node node = head;
 
@@ -249,6 +262,53 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
                 return p;
             }
         };
+    }
+
+    // Вспомогательная функция для интерполяции,
+    // использует не индекс, а Node, для избежания
+    // повторного прохода по списку.
+    private double interpolate(double x, Node nodeLeft) {
+        if (count < 2) {
+            throw new IllegalStateException();
+        }
+        Node nodeRight = nodeLeft.next;
+        if (x < nodeLeft.x || x > nodeRight.x) {
+            throw new InterpolationException();
+        }
+        return interpolate(x, nodeLeft.x, nodeRight.x, nodeLeft.y, nodeRight.y);
+    }
+
+    @Override
+    public double apply(double x) {
+        // Хотя конструкторы не позволяют создать
+        // объекты с count < 2, но с помощью
+        // remove() это можно будет сделать,
+        // и в этом случае объект нельзя будет использовать
+        // по назначению.
+        if (count < 2) {
+            throw new IllegalStateException("Table is empty.");
+        }
+
+        if (x < leftBound()) {
+            return extrapolateLeft(x);
+        }
+
+        if (x > rightBound()) {
+            return extrapolateRight(x);
+        }
+
+        // Задача со звездочкой.
+        // Реализованный подход делает только один проход
+        // по списку для поиска узла, в котором x меньше
+        // или равен заданному (по правилам floorIndexOfX).
+        Node node = floorNodeOfX(x);
+        if (node.x == x) {
+            // При точном совпадении просто возвращаем
+            // значение y в узле
+            return node.y;
+        }
+        // Иначе делаем интерполяцию между точками в node и node.next
+        return interpolate(x, node);
     }
 
     static class Node {
