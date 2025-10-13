@@ -42,6 +42,14 @@ public class TabulatedFunctionOperationService {
         return doOperation(a, b, (u, v) -> u - v);
     }
 
+    public TabulatedFunction mul(TabulatedFunction a, TabulatedFunction b) {
+        return doOperation(a, b, (u, v) -> u * v);
+    }
+
+    public TabulatedFunction div(TabulatedFunction a, TabulatedFunction b) {
+        return doOperation(a, b, (u, v) -> u / v);
+    }
+
     private TabulatedFunction doOperation(TabulatedFunction a, TabulatedFunction b, BiOperation operation) {
         if (a.getCount() != b.getCount()) {
             throw new InconsistentFunctionsException();
