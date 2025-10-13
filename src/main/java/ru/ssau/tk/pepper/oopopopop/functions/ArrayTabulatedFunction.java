@@ -1,7 +1,5 @@
 package ru.ssau.tk.pepper.oopopopop.functions;
 
-import ru.ssau.tk.pepper.oopopopop.exceptions.InterpolationException;
-
 import java.util.Arrays;
 
 public class ArrayTabulatedFunction extends AbstractTabulatedFunction implements Insertable, Removable {
@@ -9,12 +7,15 @@ public class ArrayTabulatedFunction extends AbstractTabulatedFunction implements
     private double[] yValues;
 
     public ArrayTabulatedFunction(double[] xValues, double[] yValues) {
-        checkLengthIsTheSame(xValues, yValues);
-        checkSorted(xValues);
+        if (xValues.length != yValues.length) {
+            throw new IllegalArgumentException();
+        }
         if (xValues.length < 2) {
             throw new IllegalArgumentException();
         }
-
+        if (!isSorted(xValues)) {
+            throw new IllegalArgumentException();
+        }
         this.count = xValues.length;
         this.xValues = Arrays.copyOf(xValues, xValues.length);
         this.yValues = Arrays.copyOf(yValues, yValues.length);
@@ -75,9 +76,6 @@ public class ArrayTabulatedFunction extends AbstractTabulatedFunction implements
     protected double interpolate(double x, int floorIndex) {
         if (count < 2) {
             throw new IllegalStateException();
-        }
-        if (x < xValues[floorIndex] || x > xValues[floorIndex + 1]) {
-            throw new InterpolationException();
         }
         return interpolate(x, xValues[floorIndex], xValues[floorIndex + 1], yValues[floorIndex], yValues[floorIndex + 1]);
     }

@@ -13,29 +13,42 @@ class ArrayTabulatedFunctionTest {
 
     private final MathFunction F1 = x -> 2.0 * x + 1;
 
+    private final double[] X2 = {1};
+    private final double[] Y2 = {1};
+    private final double[] X3 = {1, 2};
+    private final double[] Y3 = {1, 2, 3};
+
+    private final double[] X4 = {2, 1};
+    private final double[] Y4 = {1, 2};
+
+    @Test
+    void constructor1() {
+        assertThrows(IllegalArgumentException.class, () -> new ArrayTabulatedFunction(X2, Y2));
+        assertThrows(IllegalArgumentException.class, () -> new ArrayTabulatedFunction(X3, Y3));
+        assertThrows(IllegalArgumentException.class, () -> new ArrayTabulatedFunction(X4, Y4));
+    }
+
     @Test
     void constructor2() {
         TabulatedFunction f1 = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
-
         assertEquals(X1.length, f1.getCount());
         assertEquals(X1[0], f1.getX(0), DELTA);
         assertEquals(X1[X1.length - 1], f1.getX(X1.length - 1), DELTA);
 
-        TabulatedFunction f2 = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], 1);
-
-        assertEquals(1, f2.getCount());
+        TabulatedFunction f2 = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], 2);
+        assertEquals(2, f2.getCount());
         assertEquals(X1[0], f2.getX(0), DELTA);
 
-        TabulatedFunction f3 = new ArrayTabulatedFunction(F1, X1[X1.length - 1], X1[0], 1);
-
-        assertEquals(1, f3.getCount());
+        TabulatedFunction f3 = new ArrayTabulatedFunction(F1, X1[X1.length - 1], X1[0], 2);
+        assertEquals(2, f3.getCount());
         assertEquals(X1[0], f3.getX(0), DELTA);
 
         TabulatedFunction f4 = new ArrayTabulatedFunction(F1, X1[0], X1[0], X1.length);
-
         assertEquals(X1.length, f4.getCount());
         assertEquals(X1[0], f4.getX(0), DELTA);
         assertEquals(X1[0], f4.getX(X1.length - 1), DELTA);
+
+        assertThrows(IllegalArgumentException.class, () -> new ArrayTabulatedFunction(F1, 0, 1, 1));
     }
 
     @Test
@@ -181,5 +194,36 @@ class ArrayTabulatedFunctionTest {
         assertEquals(f.getCount() - 1, f.indexOfY(y));
         assertEquals(x, f.getX(f.getCount() - 1), DELTA);
         assertEquals(y, f.getY(f.getCount() - 1), DELTA);
+    }
+
+    @Test
+    void remove() {
+        ArrayTabulatedFunction f = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
+
+        // Удаление из середины
+        int idx = X1.length / 2;
+        f.remove(idx);
+        assertEquals(X1.length - 1, f.getCount());
+        assertEquals(X1[idx + 1], f.getX(idx), DELTA);
+        assertEquals(Y1[idx + 1], f.getY(idx), DELTA);
+
+        // Удаление из начала
+        idx = 0;
+        f.remove(idx);
+        assertEquals(X1.length - 2, f.getCount());
+        assertEquals(X1[idx + 1], f.getX(idx), DELTA);
+        assertEquals(Y1[idx + 1], f.getY(idx), DELTA);
+
+        // Удаление из конца
+        idx = f.getCount() - 1;
+        f.remove(idx);
+        assertEquals(X1.length - 3, f.getCount());
+        assertEquals(X1[X1.length - 2], f.getX(idx - 1), DELTA);
+        assertEquals(Y1[Y1.length - 2], f.getY(idx - 1), DELTA);
+
+        // Проверка, что все остальные элементы удаляются корректно
+        while (f.getCount() > 0) {
+            assertDoesNotThrow(() -> f.remove(0));
+        }
     }
 }
