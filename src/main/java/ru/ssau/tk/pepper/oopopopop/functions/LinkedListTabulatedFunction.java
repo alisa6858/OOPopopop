@@ -2,6 +2,8 @@ package ru.ssau.tk.pepper.oopopopop.functions;
 
 import ru.ssau.tk.pepper.oopopopop.exceptions.InterpolationException;
 
+import java.util.Iterator;
+
 public class LinkedListTabulatedFunction extends AbstractTabulatedFunction implements Insertable, Removable {
     Node head = null;
 
@@ -219,6 +221,11 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
         if (count == 0) {
             head = null;
         }
+    }
+
+    @Override
+    public Iterator<Point> iterator() {
+        throw new UnsupportedOperationException();
     }
 
     static class Node {
