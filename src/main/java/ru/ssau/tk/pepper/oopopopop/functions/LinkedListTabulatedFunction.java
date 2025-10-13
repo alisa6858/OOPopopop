@@ -2,10 +2,15 @@ package ru.ssau.tk.pepper.oopopopop.functions;
 
 import ru.ssau.tk.pepper.oopopopop.exceptions.InterpolationException;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class LinkedListTabulatedFunction extends AbstractTabulatedFunction implements Insertable, Removable {
+public class LinkedListTabulatedFunction extends AbstractTabulatedFunction implements Insertable, Removable, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1659741918469579629L;
+
     Node head = null;
 
     public LinkedListTabulatedFunction(double[] xValues, double[] yValues) {
