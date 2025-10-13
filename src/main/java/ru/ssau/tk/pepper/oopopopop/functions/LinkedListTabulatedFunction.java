@@ -7,7 +7,7 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
         if (xValues.length != yValues.length) {
             throw new IllegalArgumentException();
         }
-        if (xValues.length == 0) {
+        if (xValues.length < 2) {
             throw new IllegalArgumentException();
         }
         if (!isSorted(xValues)) {
@@ -19,7 +19,7 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
     }
 
     public LinkedListTabulatedFunction(MathFunction source, double xFrom, double xTo, int count) {
-        if (count < 1) {
+        if (count < 2) {
             throw new IllegalArgumentException();
         }
         if (xFrom > xTo) {
@@ -27,15 +27,11 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
             xFrom = xTo;
             xTo = t;
         }
-        if (count == 1) {
-            addNode(xFrom, source.apply(xFrom));
-        } else {
-            double step = (xTo - xFrom) / (count - 1);
-            for (int i = 0; i < count; ++i) {
-                double x = xFrom + step * i;
-                double y = source.apply(x);
-                addNode(x, y);
-            }
+        double step = (xTo - xFrom) / (count - 1);
+        for (int i = 0; i < count; ++i) {
+            double x = xFrom + step * i;
+            double y = source.apply(x);
+            addNode(x, y);
         }
     }
 
@@ -61,6 +57,12 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
 
     @Override
     protected int floorIndexOfX(double x) {
+        if (count == 0) {
+            throw new IllegalStateException();
+        }
+        if (x < leftBound()) {
+            throw new IllegalArgumentException();
+        }
         Node node = head.prev;
         for (int i = count - 1; i >= 0; --i) {
             if (x >= node.x) {
@@ -68,11 +70,31 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
             }
             node = node.prev;
         }
-        return count;
+        throw new IllegalStateException(); // unreachable
+    }
+
+    private Node floorNodeOfX(double x) {
+        if (count == 0) {
+            throw new IllegalStateException();
+        }
+        if (x < leftBound()) {
+            throw new IllegalArgumentException();
+        }
+        Node node = head.prev;
+        for (int i = count - 1; i >= 0; --i) {
+            if (x >= node.x) {
+                return node;
+            }
+            node = node.prev;
+        }
+        throw new IllegalStateException(); // unreachable
     }
 
     @Override
     protected double extrapolateLeft(double x) {
+        if (count == 0) {
+            throw new IllegalStateException();
+        }
         if (getCount() == 1) {
             return head.y;
         }
@@ -81,6 +103,9 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
 
     @Override
     protected double extrapolateRight(double x) {
+        if (count == 0) {
+            throw new IllegalStateException();
+        }
         if (getCount() == 1) {
             return head.y;
         }
@@ -101,7 +126,7 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
     @Override
     public double getX(int index) {
         if (index < 0 || index >= getCount()) {
-            throw new IndexOutOfBoundsException();
+            throw new IllegalArgumentException();
         }
         return getNode(index).x;
     }
@@ -109,7 +134,7 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
     @Override
     public double getY(int index) {
         if (index < 0 || index >= getCount()) {
-            throw new IndexOutOfBoundsException();
+            throw new IllegalArgumentException();
         }
         return getNode(index).y;
     }
@@ -117,7 +142,7 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
     @Override
     public void setY(int index, double value) {
         if (index < 0 || index >= getCount()) {
-            throw new IndexOutOfBoundsException();
+            throw new IllegalArgumentException();
         }
         getNode(index).y = value;
     }
@@ -148,11 +173,17 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
 
     @Override
     public double leftBound() {
+        if (count == 0) {
+            throw new IllegalStateException();
+        }
         return head.x;
     }
 
     @Override
     public double rightBound() {
+        if (count == 0) {
+            throw new IllegalStateException();
+        }
         return head.prev.x;
     }
 
@@ -170,9 +201,8 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
                     head = head.prev;
                 }
             } else {
-                idx = floorIndexOfX(x);
                 Node newNode = new Node(x, y);
-                Node node = getNode(idx);
+                Node node = floorNodeOfX(x);
                 node.link(newNode);
                 count += 1;
             }
@@ -182,7 +212,7 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
     @Override
     public void remove(int index) {
         if (index < 0 || index >= getCount()) {
-            throw new IndexOutOfBoundsException();
+            throw new IllegalArgumentException();
         }
         Node node = getNode(index);
         if (node == head) {
@@ -194,36 +224,36 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
             head = null;
         }
     }
-}
 
-class Node {
-    double x;
-    double y;
+    static class Node {
+        double x;
+        double y;
 
-    Node next;
+        Node next;
 
-    Node prev;
+        Node prev;
 
-    Node(double x, double y, Node next, Node prev) {
-        this.x = x;
-        this.y = y;
-        this.next = next;
-        this.prev = prev;
-    }
+        Node(double x, double y, Node next, Node prev) {
+            this.x = x;
+            this.y = y;
+            this.next = next;
+            this.prev = prev;
+        }
 
-    Node(double x, double y) {
-        this(x, y, null, null);
-    }
+        Node(double x, double y) {
+            this(x, y, null, null);
+        }
 
-    void link(Node successor) {
-        successor.next = next;
-        successor.prev = this;
-        next.prev = successor;
-        next = successor;
-    }
+        void link(Node successor) {
+            successor.next = next;
+            successor.prev = this;
+            next.prev = successor;
+            next = successor;
+        }
 
-    void unlink() {
-        next.prev = prev;
-        prev.next = next;
+        void unlink() {
+            next.prev = prev;
+            prev.next = next;
+        }
     }
 }

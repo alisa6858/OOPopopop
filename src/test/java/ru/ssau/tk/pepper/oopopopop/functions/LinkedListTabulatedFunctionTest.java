@@ -13,29 +13,42 @@ class LinkedListTabulatedFunctionTest {
 
     private final MathFunction F1 = x -> 2.0 * x + 1;
 
+    private final double[] X2 = {1};
+    private final double[] Y2 = {1};
+    private final double[] X3 = {1, 2};
+    private final double[] Y3 = {1, 2, 3};
+
+    private final double[] X4 = {2, 1};
+    private final double[] Y4 = {1, 2};
+
+    @Test
+    void constructor1() {
+        assertThrows(IllegalArgumentException.class, () -> new LinkedListTabulatedFunction(X2, Y2));
+        assertThrows(IllegalArgumentException.class, () -> new LinkedListTabulatedFunction(X3, Y3));
+        assertThrows(IllegalArgumentException.class, () -> new LinkedListTabulatedFunction(X4, Y4));
+    }
+
     @Test
     void constructor2() {
         TabulatedFunction f1 = new LinkedListTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
-
         assertEquals(X1.length, f1.getCount());
         assertEquals(X1[0], f1.getX(0), DELTA);
         assertEquals(X1[X1.length - 1], f1.getX(X1.length - 1), DELTA);
 
-        TabulatedFunction f2 = new LinkedListTabulatedFunction(F1, X1[0], X1[X1.length - 1], 1);
-
-        assertEquals(1, f2.getCount());
+        TabulatedFunction f2 = new LinkedListTabulatedFunction(F1, X1[0], X1[X1.length - 1], 2);
+        assertEquals(2, f2.getCount());
         assertEquals(X1[0], f2.getX(0), DELTA);
 
-        TabulatedFunction f3 = new LinkedListTabulatedFunction(F1, X1[X1.length - 1], X1[0], 1);
-
-        assertEquals(1, f3.getCount());
+        TabulatedFunction f3 = new LinkedListTabulatedFunction(F1, X1[X1.length - 1], X1[0], 2);
+        assertEquals(2, f3.getCount());
         assertEquals(X1[0], f3.getX(0), DELTA);
 
         TabulatedFunction f4 = new LinkedListTabulatedFunction(F1, X1[0], X1[0], X1.length);
-
         assertEquals(X1.length, f4.getCount());
         assertEquals(X1[0], f4.getX(0), DELTA);
         assertEquals(X1[0], f4.getX(X1.length - 1), DELTA);
+
+        assertThrows(IllegalArgumentException.class, () -> new LinkedListTabulatedFunction(F1, 0, 1, 1));
     }
 
     @Test
