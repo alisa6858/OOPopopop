@@ -1,7 +1,7 @@
 package ru.ssau.tk.pepper.oopopopop.functions;
 
-import ru.ssau.tk.pepper.oopopopop.exceptions.DifferentLengthOfArraysException;
 import ru.ssau.tk.pepper.oopopopop.exceptions.ArrayIsNotSortedException;
+import ru.ssau.tk.pepper.oopopopop.exceptions.DifferentLengthOfArraysException;
 
 public abstract class AbstractTabulatedFunction implements TabulatedFunction {
     protected int count = 0;
@@ -29,8 +29,10 @@ public abstract class AbstractTabulatedFunction implements TabulatedFunction {
 
     @Override
     public double apply(double x) {
-        // Хотя конструкторы не позволяют создать объекты с count == 0, но с помощью
-        // remove() это можно будет сделать, и в этом случае объект нельзя будет использовать
+        // Хотя конструкторы не позволяют создать
+        // объекты с count == 0, но с помощью
+        // remove() это можно будет сделать,
+        // и в этом случае объект нельзя будет использовать
         // по назначению.
         if (count == 0) {
             throw new IllegalStateException("Table is empty.");
@@ -49,8 +51,6 @@ public abstract class AbstractTabulatedFunction implements TabulatedFunction {
             index = floorIndexOfX(x);
             return interpolate(x, index);
         }
-
-
 
         return getY(index);
     }

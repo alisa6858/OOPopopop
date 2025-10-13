@@ -1,18 +1,17 @@
 package ru.ssau.tk.pepper.oopopopop.functions;
 
+import ru.ssau.tk.pepper.oopopopop.exceptions.InterpolationException;
+
 public class LinkedListTabulatedFunction extends AbstractTabulatedFunction implements Insertable, Removable {
     Node head = null;
 
     public LinkedListTabulatedFunction(double[] xValues, double[] yValues) {
-        if (xValues.length != yValues.length) {
-            throw new IllegalArgumentException();
-        }
+        checkLengthIsTheSame(xValues, yValues);
+        checkSorted(xValues);
         if (xValues.length < 2) {
             throw new IllegalArgumentException();
         }
-        if (!isSorted(xValues)) {
-            throw new IllegalArgumentException();
-        }
+
         for (int i = 0; i < xValues.length; ++i) {
             addNode(xValues[i], yValues[i]);
         }
@@ -92,22 +91,16 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
 
     @Override
     protected double extrapolateLeft(double x) {
-        if (count == 0) {
+        if (count < 2) {
             throw new IllegalStateException();
-        }
-        if (getCount() == 1) {
-            return head.y;
         }
         return interpolate(x, head.x, head.next.x, head.y, head.next.y);
     }
 
     @Override
     protected double extrapolateRight(double x) {
-        if (count == 0) {
+        if (count < 2) {
             throw new IllegalStateException();
-        }
-        if (getCount() == 1) {
-            return head.y;
         }
         Node tail = head.prev;
         return interpolate(x, tail.prev.x, tail.x, tail.prev.y, tail.y);
@@ -115,11 +108,14 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
 
     @Override
     protected double interpolate(double x, int floorIndex) {
-        if (getCount() == 1) {
-            return head.y;
+        if (count < 2) {
+            throw new IllegalStateException();
         }
         Node nodeLeft = getNode(floorIndex);
         Node nodeRight = nodeLeft.next;
+        if (x < nodeLeft.x || x > nodeRight.x) {
+            throw new InterpolationException();
+        }
         return interpolate(x, nodeLeft.x, nodeRight.x, nodeLeft.y, nodeRight.y);
     }
 
