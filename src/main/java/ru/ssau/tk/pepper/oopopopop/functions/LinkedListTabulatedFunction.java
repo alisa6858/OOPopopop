@@ -3,6 +3,7 @@ package ru.ssau.tk.pepper.oopopopop.functions;
 import ru.ssau.tk.pepper.oopopopop.exceptions.InterpolationException;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class LinkedListTabulatedFunction extends AbstractTabulatedFunction implements Insertable, Removable {
     Node head = null;
@@ -225,7 +226,24 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
 
     @Override
     public Iterator<Point> iterator() {
-        throw new UnsupportedOperationException();
+        return new Iterator<>() {
+            Node node = head;
+
+            @Override
+            public boolean hasNext() {
+                return node != null;
+            }
+
+            @Override
+            public Point next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                Point p = new Point(node.x, node.y);
+                node = node.next == head ? null : node.next;
+                return p;
+            }
+        };
     }
 
     static class Node {
