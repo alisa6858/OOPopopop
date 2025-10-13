@@ -3,7 +3,15 @@ package ru.ssau.tk.pepper.oopopopop.functions;
 import ru.ssau.tk.pepper.oopopopop.exceptions.ArrayIsNotSortedException;
 import ru.ssau.tk.pepper.oopopopop.exceptions.DifferentLengthOfArraysException;
 
-public abstract class AbstractTabulatedFunction implements TabulatedFunction {
+import java.io.Serial;
+import java.io.Serializable;
+
+public abstract class AbstractTabulatedFunction implements TabulatedFunction, Serializable {
+    // Так как здесь хранится count, то для успешной сериализации/десериализации
+    // бвзовый класс также должен быть Serializable
+    @Serial
+    private static final long serialVersionUID = -6113226241446244071L;
+
     protected int count = 0;
 
     protected abstract int floorIndexOfX(double x);
