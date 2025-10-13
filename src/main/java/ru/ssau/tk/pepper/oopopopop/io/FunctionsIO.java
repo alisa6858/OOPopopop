@@ -1,5 +1,8 @@
 package ru.ssau.tk.pepper.oopopopop.io;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.security.AnyTypePermission;
+import ru.ssau.tk.pepper.oopopopop.functions.ArrayTabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.Point;
 import ru.ssau.tk.pepper.oopopopop.functions.TabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.factory.TabulatedFunctionFactory;
@@ -73,5 +76,19 @@ public final class FunctionsIO {
 
     public static TabulatedFunction deserialize(BufferedInputStream stream) throws IOException, ClassNotFoundException {
         return (TabulatedFunction) new ObjectInputStream(stream).readObject();
+    }
+
+    public static void serializeXml(BufferedWriter writer, TabulatedFunction function) throws IOException {
+        XStream xStream = new XStream();
+        xStream.toXML(function, writer);
+        writer.flush();
+    }
+
+    // Сделаем метод параметризованным, чтобы можно было использовать с обеими реализациями.
+    @SuppressWarnings("unchecked")
+    public static <T extends TabulatedFunction> T deserializeXml(BufferedReader reader) {
+        XStream xStream = new XStream();
+        xStream.addPermission(AnyTypePermission.ANY);
+        return (T) xStream.fromXML(reader);
     }
 }
