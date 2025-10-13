@@ -1,6 +1,8 @@
 package ru.ssau.tk.pepper.oopopopop.functions;
 
 import org.junit.jupiter.api.Test;
+import ru.ssau.tk.pepper.oopopopop.exceptions.ArrayIsNotSortedException;
+import ru.ssau.tk.pepper.oopopopop.exceptions.DifferentLengthOfArraysException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,8 +26,8 @@ class ArrayTabulatedFunctionTest {
     @Test
     void constructor1() {
         assertThrows(IllegalArgumentException.class, () -> new ArrayTabulatedFunction(X2, Y2));
-        assertThrows(IllegalArgumentException.class, () -> new ArrayTabulatedFunction(X3, Y3));
-        assertThrows(IllegalArgumentException.class, () -> new ArrayTabulatedFunction(X4, Y4));
+        assertThrows(DifferentLengthOfArraysException.class, () -> new ArrayTabulatedFunction(X3, Y3));
+        assertThrows(ArrayIsNotSortedException.class, () -> new ArrayTabulatedFunction(X4, Y4));
     }
 
     @Test
