@@ -1,14 +1,14 @@
 package ru.ssau.tk.pepper.oopopopop.functions.factory;
 
-import ru.ssau.tk.pepper.oopopopop.functions.ArrayTabulatedFunction;
+import ru.ssau.tk.pepper.oopopopop.functions.LinkedListTabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.StrictTabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.TabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.UnmodifiableTabulatedFunction;
 
-public class ArrayTabulatedFunctionFactory implements TabulatedFunctionFactory {
+public class LinkedListTabulatedFunctionFactory implements TabulatedFunctionFactory {
     @Override
     public TabulatedFunction create(double[] xValues, double[] yValues) {
-        return new ArrayTabulatedFunction(xValues, yValues);
+        return new LinkedListTabulatedFunction(xValues, yValues);
     }
 
     @Override

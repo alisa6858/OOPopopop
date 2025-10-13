@@ -1,10 +1,7 @@
 package ru.ssau.tk.pepper.oopopopop.functions.factory;
 
 import org.junit.jupiter.api.Test;
-import ru.ssau.tk.pepper.oopopopop.functions.ArrayTabulatedFunction;
-import ru.ssau.tk.pepper.oopopopop.functions.LinkedListTabulatedFunction;
-import ru.ssau.tk.pepper.oopopopop.functions.StrictTabulatedFunction;
-import ru.ssau.tk.pepper.oopopopop.functions.TabulatedFunction;
+import ru.ssau.tk.pepper.oopopopop.functions.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,6 +40,26 @@ class TabulatedFunctionFactoryTest {
         assertInstanceOf(StrictTabulatedFunction.class, f);
         assertDoesNotThrow(() -> {
             StrictTabulatedFunction ff = (StrictTabulatedFunction) f;
+            assertInstanceOf(LinkedListTabulatedFunction.class, ff.getFunction());
+        });
+    }
+
+    @Test
+    void createUnmodifiable1() {
+        TabulatedFunction f = new ArrayTabulatedFunctionFactory().createUnmodifiable(X1, Y1);
+        assertInstanceOf(UnmodifiableTabulatedFunction.class, f);
+        assertDoesNotThrow(() -> {
+            UnmodifiableTabulatedFunction ff = (UnmodifiableTabulatedFunction) f;
+            assertInstanceOf(ArrayTabulatedFunction.class, ff.getFunction());
+        });
+    }
+
+    @Test
+    void createUnmodifiable2() {
+        TabulatedFunction f = new LinkedListTabulatedFunctionFactory().createUnmodifiable(X1, Y1);
+        assertInstanceOf(UnmodifiableTabulatedFunction.class, f);
+        assertDoesNotThrow(() -> {
+            UnmodifiableTabulatedFunction ff = (UnmodifiableTabulatedFunction) f;
             assertInstanceOf(LinkedListTabulatedFunction.class, ff.getFunction());
         });
     }
