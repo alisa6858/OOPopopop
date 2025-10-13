@@ -18,15 +18,6 @@ public abstract class AbstractTabulatedFunction implements TabulatedFunction {
         return leftY + (rightY - leftY) / (rightX - leftX) * (x - leftX);
     }
 
-    protected boolean isSorted(double[] xValues) {
-        for (int i = 1; i < xValues.length; ++i) {
-            if (xValues[i - 1] > xValues[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     @Override
     public double apply(double x) {
         // Хотя конструкторы не позволяют создать
@@ -72,5 +63,21 @@ public abstract class AbstractTabulatedFunction implements TabulatedFunction {
                 throw new ArrayIsNotSortedException();
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName()).append(" size = ").append(count).append("\n");
+        var it = iterator();
+        if (it.hasNext()) {
+            Point p = it.next();
+            sb.append("[").append(p.x).append("; ").append(p.y).append("]");
+            while (it.hasNext()) {
+                p = it.next();
+                sb.append("\n[").append(p.x).append("; ").append(p.y).append("]");
+            }
+        }
+        return sb.toString();
     }
 }
