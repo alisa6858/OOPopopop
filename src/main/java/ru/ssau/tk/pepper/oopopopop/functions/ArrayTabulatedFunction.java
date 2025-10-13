@@ -2,11 +2,16 @@ package ru.ssau.tk.pepper.oopopopop.functions;
 
 import ru.ssau.tk.pepper.oopopopop.exceptions.InterpolationException;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class ArrayTabulatedFunction extends AbstractTabulatedFunction implements Insertable, Removable {
+public class ArrayTabulatedFunction extends AbstractTabulatedFunction implements Insertable, Removable, Serializable {
+    @Serial
+    private static final long serialVersionUID = 4057149733720959757L;
+
     private double[] xValues;
     private double[] yValues;
 
@@ -187,7 +192,7 @@ public class ArrayTabulatedFunction extends AbstractTabulatedFunction implements
         --count;
     }
 
-
+    @Override
     public Iterator<Point> iterator() {
         return new Iterator<Point>() {
             int i = 0;

@@ -1,6 +1,10 @@
 package ru.ssau.tk.pepper.oopopopop.functions;
 
 import org.junit.jupiter.api.Test;
+import ru.ssau.tk.pepper.oopopopop.exceptions.ArrayIsNotSortedException;
+import ru.ssau.tk.pepper.oopopopop.exceptions.DifferentLengthOfArraysException;
+
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,8 +28,8 @@ class ArrayTabulatedFunctionTest {
     @Test
     void constructor1() {
         assertThrows(IllegalArgumentException.class, () -> new ArrayTabulatedFunction(X2, Y2));
-        assertThrows(IllegalArgumentException.class, () -> new ArrayTabulatedFunction(X3, Y3));
-        assertThrows(IllegalArgumentException.class, () -> new ArrayTabulatedFunction(X4, Y4));
+        assertThrows(DifferentLengthOfArraysException.class, () -> new ArrayTabulatedFunction(X3, Y3));
+        assertThrows(ArrayIsNotSortedException.class, () -> new ArrayTabulatedFunction(X4, Y4));
     }
 
     @Test
@@ -225,5 +229,38 @@ class ArrayTabulatedFunctionTest {
         while (f.getCount() > 0) {
             assertDoesNotThrow(() -> f.remove(0));
         }
+    }
+
+    @Test
+    void iterator1() {
+        ArrayTabulatedFunction f = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
+        var it = f.iterator();
+        for (int i = 0; i < X1.length; ++i) {
+            assertTrue(it.hasNext());
+            final int finalI = i;
+            assertDoesNotThrow(() -> {
+                Point p = it.next();
+                assertEquals(X1[finalI], p.x, DELTA);
+                assertEquals(Y1[finalI], p.y, DELTA);
+            });
+        }
+        assertFalse(it.hasNext());
+        assertThrows(NoSuchElementException.class, it::next);
+    }
+
+    @Test
+    void iterator2() {
+        ArrayTabulatedFunction f = new ArrayTabulatedFunction(F1, X1[0], X1[X1.length - 1], X1.length);
+
+        int i = 0;
+        for (Point p: f) {
+            final int finalI = i;
+            assertDoesNotThrow(() -> {
+                assertEquals(X1[finalI], p.x, DELTA);
+                assertEquals(Y1[finalI], p.y, DELTA);
+            });
+            ++i;
+        }
+
     }
 }
