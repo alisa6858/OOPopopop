@@ -3,6 +3,7 @@ package ru.ssau.tk.pepper.oopopopop.functions.factory;
 import org.junit.jupiter.api.Test;
 import ru.ssau.tk.pepper.oopopopop.functions.ArrayTabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.LinkedListTabulatedFunction;
+import ru.ssau.tk.pepper.oopopopop.functions.StrictTabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.TabulatedFunction;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,5 +23,27 @@ class TabulatedFunctionFactoryTest {
     void create2() {
         TabulatedFunction f = new LinkedListTabulatedFunctionFactory().create(X1, Y1);
         assertInstanceOf(LinkedListTabulatedFunction.class, f);
+    }
+
+    @Test
+    void createStrict1() {
+        TabulatedFunction f = new ArrayTabulatedFunctionFactory().createStrict(X1, Y1);
+
+        assertInstanceOf(StrictTabulatedFunction.class, f);
+        assertDoesNotThrow(() -> {
+            StrictTabulatedFunction ff = (StrictTabulatedFunction) f;
+            assertInstanceOf(ArrayTabulatedFunction.class, ff.getFunction());
+        });
+    }
+
+    @Test
+    void createStrict2() {
+        TabulatedFunction f = new LinkedListTabulatedFunctionFactory().createStrict(X1, Y1);
+        assertInstanceOf(StrictTabulatedFunction.class, f);
+        assertInstanceOf(StrictTabulatedFunction.class, f);
+        assertDoesNotThrow(() -> {
+            StrictTabulatedFunction ff = (StrictTabulatedFunction) f;
+            assertInstanceOf(LinkedListTabulatedFunction.class, ff.getFunction());
+        });
     }
 }

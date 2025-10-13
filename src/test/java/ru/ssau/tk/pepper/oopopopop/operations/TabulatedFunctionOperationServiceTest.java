@@ -3,9 +3,6 @@ package ru.ssau.tk.pepper.oopopopop.operations;
 import org.junit.jupiter.api.Test;
 import ru.ssau.tk.pepper.oopopopop.exceptions.InconsistentFunctionsException;
 import ru.ssau.tk.pepper.oopopopop.functions.*;
-import ru.ssau.tk.pepper.oopopopop.functions.factory.ArrayTabulatedFunctionFactory;
-import ru.ssau.tk.pepper.oopopopop.functions.factory.LinkedListTabulatedFunctionFactory;
-import ru.ssau.tk.pepper.oopopopop.functions.factory.TabulatedFunctionFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
