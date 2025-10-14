@@ -3,7 +3,6 @@ package ru.ssau.tk.pepper.oopopopop.functions.factory;
 import ru.ssau.tk.pepper.oopopopop.functions.ArrayTabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.StrictTabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.TabulatedFunction;
-import ru.ssau.tk.pepper.oopopopop.functions.UnmodifiableTabulatedFunction;
 
 public class ArrayTabulatedFunctionFactory implements TabulatedFunctionFactory {
     @Override
@@ -24,5 +23,10 @@ public class ArrayTabulatedFunctionFactory implements TabulatedFunctionFactory {
     @Override
     public TabulatedFunction createStrictUnmodifiable(double[] xValues, double[] yValues) {
         return new StrictTabulatedFunction(createUnmodifiable(xValues, yValues));
+    }
+
+    @Override
+    public TabulatedFunction createUnmodifiable(double[] xValues, double[] yValues) {
+        return new UnmodifiableTabulatedFunction(create(xValues, yValues));
     }
 }

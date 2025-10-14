@@ -9,6 +9,10 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class SynchronizedTabulatedFunction implements TabulatedFunction {
+    public interface Operation<T> {
+        T apply(SynchronizedTabulatedFunction f);
+    }
+
     private final TabulatedFunction function;
 
     public SynchronizedTabulatedFunction(TabulatedFunction function) {
@@ -101,6 +105,12 @@ public class SynchronizedTabulatedFunction implements TabulatedFunction {
     public double apply(double x) {
         synchronized (function) {
             return function.apply(x);
+        }
+    }
+
+    public <T> T doSynchronously(Operation<T> operation) {
+        synchronized (function) {
+            return operation.apply(this);
         }
     }
 }
