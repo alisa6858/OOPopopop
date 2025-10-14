@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import ru.ssau.tk.pepper.oopopopop.functions.ArrayTabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.LinkedListTabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.TabulatedFunction;
-import ru.ssau.tk.pepper.oopopopop.functions.factory.ArrayTabulatedFunctionFactory;
-import ru.ssau.tk.pepper.oopopopop.functions.factory.LinkedListTabulatedFunctionFactory;
 
 import java.io.*;
 import java.util.Arrays;

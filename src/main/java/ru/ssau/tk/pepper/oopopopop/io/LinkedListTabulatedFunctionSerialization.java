@@ -2,7 +2,6 @@ package ru.ssau.tk.pepper.oopopopop.io;
 
 import ru.ssau.tk.pepper.oopopopop.functions.LinkedListTabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.TabulatedFunction;
-import ru.ssau.tk.pepper.oopopopop.functions.factory.LinkedListTabulatedFunctionFactory;
 import ru.ssau.tk.pepper.oopopopop.operations.TabulatedDifferentialOperator;
 
 import java.io.*;

@@ -1,8 +1,6 @@
 package ru.ssau.tk.pepper.oopopopop.io;
 
 import ru.ssau.tk.pepper.oopopopop.functions.TabulatedFunction;
-import ru.ssau.tk.pepper.oopopopop.functions.factory.ArrayTabulatedFunctionFactory;
-import ru.ssau.tk.pepper.oopopopop.functions.factory.LinkedListTabulatedFunctionFactory;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
