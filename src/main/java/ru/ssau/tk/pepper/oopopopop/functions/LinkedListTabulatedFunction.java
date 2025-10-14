@@ -311,13 +311,18 @@ public class LinkedListTabulatedFunction extends AbstractTabulatedFunction imple
         return interpolate(x, node);
     }
 
-    static class Node {
+    static class Node implements Serializable {
+        @Serial
+        private static final long serialVersionUID = -3742751954934321775L;
+
         double x;
         double y;
 
         Node next;
 
         Node prev;
+
+        Node() {}
 
         Node(double x, double y, Node next, Node prev) {
             this.x = x;
