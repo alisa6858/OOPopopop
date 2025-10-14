@@ -1,11 +1,18 @@
 package ru.ssau.tk.pepper.oopopopop.concurrent;
 
+import org.jetbrains.annotations.NotNull;
 import ru.ssau.tk.pepper.oopopopop.functions.Point;
 import ru.ssau.tk.pepper.oopopopop.functions.TabulatedFunction;
+import ru.ssau.tk.pepper.oopopopop.operations.TabulatedFunctionOperationService;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class SynchronizedTabulatedFunction implements TabulatedFunction {
+    public interface Operation<T> {
+        T apply(SynchronizedTabulatedFunction f);
+    }
+
     private final TabulatedFunction function;
 
     public SynchronizedTabulatedFunction(TabulatedFunction function) {
@@ -68,11 +75,29 @@ public class SynchronizedTabulatedFunction implements TabulatedFunction {
         }
     }
 
-    @SuppressWarnings("NullableProblems")
+    @NotNull
     @Override
     public Iterator<Point> iterator() {
         synchronized (function) {
-            return function.iterator();
+            return new Iterator<>() {
+                final Point[] points = TabulatedFunctionOperationService.asPoints(function);
+                int i = 0;
+
+                @Override
+                public boolean hasNext() {
+                    return i < points.length;
+                }
+
+                @Override
+                public Point next() {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException();
+                    }
+                    Point p = new Point(points[i].x, points[i].y);
+                    ++i;
+                    return p;
+                }
+            };
         }
     }
 
@@ -80,6 +105,12 @@ public class SynchronizedTabulatedFunction implements TabulatedFunction {
     public double apply(double x) {
         synchronized (function) {
             return function.apply(x);
+        }
+    }
+
+    public <T> T doSynchronously(Operation<T> operation) {
+        synchronized (function) {
+            return operation.apply(this);
         }
     }
 }

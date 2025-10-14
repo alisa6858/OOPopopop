@@ -169,4 +169,24 @@ class SynchronizedTabulatedFunctionTest {
         }
 
     }
+
+    @Test
+    void doSynchronously1() {
+        SynchronizedTabulatedFunction f = new SynchronizedTabulatedFunction(new ArrayTabulatedFunction(X1, Y1));
+        f.doSynchronously((SynchronizedTabulatedFunction.Operation<Void>) f1 -> {
+            f1.setY(0, f1.getY(0) * 2);
+            return null;
+        });
+        assertEquals(Y1[0] * 2, f.getY(0), DELTA);
+    }
+
+    @Test
+    void doSynchronously2() {
+        SynchronizedTabulatedFunction f = new SynchronizedTabulatedFunction(new ArrayTabulatedFunction(X1, Y1));
+        double y = f.doSynchronously(f1 -> {
+            f1.setY(0, f1.getY(0) * 2);
+            return f1.getY(0);
+        });
+        assertEquals(Y1[0] * 2, y, DELTA);
+    }
 }
