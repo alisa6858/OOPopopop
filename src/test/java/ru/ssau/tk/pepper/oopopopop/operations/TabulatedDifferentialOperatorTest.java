@@ -2,6 +2,9 @@ package ru.ssau.tk.pepper.oopopopop.operations;
 
 import org.junit.jupiter.api.Test;
 import ru.ssau.tk.pepper.oopopopop.functions.*;
+import ru.ssau.tk.pepper.oopopopop.functions.factory.ArrayTabulatedFunctionFactory;
+import ru.ssau.tk.pepper.oopopopop.functions.factory.LinkedListTabulatedFunctionFactory;
+import ru.ssau.tk.pepper.oopopopop.functions.factory.TabulatedFunctionFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -79,5 +82,18 @@ class TabulatedDifferentialOperatorTest {
         TabulatedDifferentialOperator op1 = new TabulatedDifferentialOperator();
         op1.setFactory(f1);
         assertEquals(f1, op1.getFactory());
+    }
+
+    @Test
+    void deriveSynchronously() {
+        TabulatedFunction f = new LinkedListTabulatedFunction(X1, Y1);
+        TabulatedDifferentialOperator op = new TabulatedDifferentialOperator(new ArrayTabulatedFunctionFactory());
+        TabulatedFunction df = op.deriveSynchronously(f);
+
+        var it = df.iterator();
+        for (int i = 0; i < f.getCount() - 1; ++i) {
+            Point p = it.next();
+            assertEquals(DY1[i], p.y, DELTA);
+        }
     }
 }

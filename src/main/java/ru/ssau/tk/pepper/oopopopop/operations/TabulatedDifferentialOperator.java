@@ -1,5 +1,6 @@
 package ru.ssau.tk.pepper.oopopopop.operations;
 
+import ru.ssau.tk.pepper.oopopopop.concurrent.SynchronizedTabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.Point;
 import ru.ssau.tk.pepper.oopopopop.functions.TabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.factory.ArrayTabulatedFunctionFactory;
@@ -29,6 +30,16 @@ public class TabulatedDifferentialOperator implements DifferentialOperator<Tabul
         }
         yValues[pts.length - 1] = yValues[pts.length - 2];
         return factory.create(xValues, yValues);
+    }
+
+    public TabulatedFunction deriveSynchronously(TabulatedFunction function) {
+        SynchronizedTabulatedFunction f;
+        if (function instanceof SynchronizedTabulatedFunction) {
+            f = (SynchronizedTabulatedFunction) function;
+        } else {
+            f = new SynchronizedTabulatedFunction(function);
+        }
+        return f.doSynchronously(this::derive);
     }
 
     public TabulatedFunctionFactory getFactory() {
