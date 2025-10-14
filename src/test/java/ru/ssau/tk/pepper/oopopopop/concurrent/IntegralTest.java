@@ -1,10 +1,12 @@
-package ru.ssau.tk.pepper.concurrent;
+package ru.ssau.tk.pepper.oopopopop.concurrent;
 
 import org.junit.jupiter.api.Test;
 import ru.ssau.tk.pepper.oopopopop.functions.ArrayTabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.TabulatedFunction;
 
 import java.util.concurrent.ExecutionException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class IntegralTest {
     private final double DELTA = 1e-10;
