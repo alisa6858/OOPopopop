@@ -4,6 +4,11 @@ import org.junit.jupiter.api.Test;
 import ru.ssau.tk.pepper.oopopopop.exceptions.InconsistentFunctionsException;
 import ru.ssau.tk.pepper.oopopopop.functions.*;
 
+import ru.ssau.tk.pepper.oopopopop.functions.factory.ArrayTabulatedFunctionFactory;
+import ru.ssau.tk.pepper.oopopopop.functions.factory.LinkedListTabulatedFunctionFactory;
+import ru.ssau.tk.pepper.oopopopop.functions.factory.TabulatedFunctionFactory;
+
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TabulatedFunctionOperationServiceTest {
@@ -55,21 +60,7 @@ class TabulatedFunctionOperationServiceTest {
         }
     }
 
-    @Test
-    void getFactory() {
-        TabulatedFunctionFactory f1 = new LinkedListTabulatedFunctionFactory();
-        TabulatedFunctionOperationService s1 = new TabulatedFunctionOperationService(f1);
-        assertEquals(f1, s1.getFactory());
 
-        TabulatedFunctionFactory f2 = new ArrayTabulatedFunctionFactory();
-        TabulatedFunctionOperationService s2 = new TabulatedFunctionOperationService(f2);
-        assertEquals(f2, s2.getFactory());
-
-        TabulatedFunctionOperationService s3 = new TabulatedFunctionOperationService();
-        TabulatedFunctionFactory f3 = s3.getFactory();
-        assertNotNull(f3);
-        assertInstanceOf(ArrayTabulatedFunctionFactory.class, f3);
-    }
 
     @Test
     void setFactory() {

@@ -2,9 +2,7 @@ package ru.ssau.tk.pepper.oopopopop.io;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import ru.ssau.tk.pepper.oopopopop.functions.ArrayTabulatedFunction;
-import ru.ssau.tk.pepper.oopopopop.functions.LinkedListTabulatedFunction;
-import ru.ssau.tk.pepper.oopopopop.functions.TabulatedFunction;
+import ru.ssau.tk.pepper.oopopopop.functions.*;
 
 import java.io.*;
 import java.util.Arrays;

@@ -1,6 +1,7 @@
 package ru.ssau.tk.pepper.oopopopop.operations;
 
 import ru.ssau.tk.pepper.oopopopop.concurrent.SynchronizedTabulatedFunction;
+import ru.ssau.tk.pepper.oopopopop.functions.ArrayTabulatedFunctionFactory;
 import ru.ssau.tk.pepper.oopopopop.functions.Point;
 import ru.ssau.tk.pepper.oopopopop.functions.TabulatedFunction;
 import ru.ssau.tk.pepper.oopopopop.functions.factory.TabulatedFunctionFactory;
