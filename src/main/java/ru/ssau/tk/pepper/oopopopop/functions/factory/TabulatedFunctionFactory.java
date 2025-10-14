@@ -8,4 +8,6 @@ public interface TabulatedFunctionFactory {
     TabulatedFunction createStrict(double[] xValues, double[] yValues);
 
     TabulatedFunction createUnmodifiable(double[] xValues, double[] yValues);
+
+    TabulatedFunction createStrictUnmodifiable(double[] xValues, double[] yValues);
 }
