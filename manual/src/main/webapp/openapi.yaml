@@ -1,0 +1,214 @@
+openapi: 3.0.1
+info:
+  title: Access Control API (manual)
+  version: "1.0"
+  description: |
+    API для лабораторных 5–6, реализация manual (Servlet + JDBC).
+
+servers:
+  - url: http://localhost:8080/manual
+    description: Локальный Tomcat (контекст manual, подставь свой)
+
+paths:
+  /api/users:
+    get:
+      summary: Поиск пользователей
+      parameters:
+        - name: usernameLike
+          in: query
+          schema:
+            type: string
+        - name: role
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список пользователей
+    post:
+      summary: Создать пользователя
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: integer
+      responses:
+        '200':
+          description: Пользователь создан
+
+  /api/users/{id}:
+    get:
+      summary: Получить пользователя по id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Данные пользователя
+    delete:
+      summary: Удалить пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Результат удаления
+
+  /api/functions:
+    get:
+      summary: Получить функции
+      responses:
+        '200':
+          description: Список функций
+    post:
+      summary: Создать функцию
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Функция создана
+
+  /api/points:
+    get:
+      summary: Получить точки по функции
+      parameters:
+        - name: functionId
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список точек
+    post:
+      summary: Создать точку
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                functionId:
+                  type: integer
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Точка создана
+
+  /api/permissions:
+    get:
+      summary: Получить права пользователя
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список прав
+    post:
+      summary: Выдать право
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                functionId:
+                  type: integer
+                allowed:
+                  type: boolean
+      responses:
+        '200':
+          description: Право выдано
+    delete:
+      summary: Отозвать право
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Результат отзыва
+
+components:
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: integer
+    FunctionDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        code:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+    PointDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        functionId:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+    PermissionDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        functionId:
+          type: integer
+        allowed:
+          type: boolean
