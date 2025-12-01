@@ -1,0 +1,36 @@
+# ============================
+#  Настройки PostgreSQL
+# ============================
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lab5db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # можно поставить validate или none
+    show-sql: true        # будет выводить SQL в консоль
+    properties:
+      hibernate:
+        format_sql: true  # красиво форматирует SQL
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Для ускорения тестов
+  sql:
+    init:
+      mode: always
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: DEBUG        # показывать запросы
+    org.hibernate.orm.jdbc.bind: TRACE  # показывать параметры запросов
+    ru.lab5.framework: DEBUG        # наши логи
+
+# ============================
+# Приложение
+# ============================
+server:
+  port: 8090
